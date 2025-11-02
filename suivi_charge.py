@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import os
-from base64 import b64encode
 
 # === PAGE CONFIGURATION ===
 st.set_page_config(page_title="Suivi Joueuse RMBB", layout="centered")
@@ -13,12 +12,6 @@ body, .stApp {
     background-color: #e0e0e0;
     color: black;
     font-family: 'Segoe UI', sans-serif;
-}
-
-.logo-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 15px;
 }
 
 .card {
@@ -65,13 +58,6 @@ h4 {
     margin-top: 15px;
 }
 </style>
-""", unsafe_allow_html=True)
-
-# === LOGO CENTRÉ ===
-st.markdown(f"""
-<div class="logo-container">
-    <img src="data:image/png;base64,{logo_base64}" width="150">
-</div>
 """, unsafe_allow_html=True)
 
 # === TITRE ===
@@ -123,9 +109,3 @@ if st.button("💾 Enregistrer mes données"):
 
         st.success("✅ Données enregistrées avec succès !")
         st.markdown("<div class='success-msg'>Merci pour ta participation 💙</div>", unsafe_allow_html=True)
-
-
-
-
-
-
