@@ -1,19 +1,66 @@
 import streamlit as st
 import pandas as pd
 import os
+from base64 import b64encode
 
 # === PAGE CONFIGURATION ===
 st.set_page_config(page_title="Suivi Joueuse RMBB", layout="centered")
 
+# === LOGO RMBB ===
+logo_path = r"C:\Users\march\OneDrive - univ-rouen.fr\Bureau\Rouen Basket\logo équipe\Rouen Bihorel basket.png"
+with open(logo_path, "rb") as f:
+    logo_base64 = b64encode(f.read()).decode("utf-8")
+
 # === STYLE MODERNE ===
 st.markdown("""
 <style>
+/* === FOND DE PAGE GRIS === */
 body, .stApp {
     background-color: #e0e0e0;
     color: black;
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* === BANDEAU BLEU SUPÉRIEUR === */
+.header-banner {
+    width: 100%;
+    margin: 0;
+    background-color: #003366;
+    color: white;
+    padding: 15px 20px;
+    border-bottom: 4px solid #0055a5;
+    border-radius: 0 0 15px 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-content h1 {
+    color: white;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.8em;
+    flex-grow: 1;
+}
+
+.header-content img {
+    width: 80px;
+    margin: 0 15px;
+}
+
+.top-text {
+    text-align: center;
+    font-size: 1em;
+    color: #cce0ff;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+/* === CARTES ET INFO-CARDS === */
 .card {
     background-color: #ffffff;
     padding: 20px;
@@ -22,11 +69,12 @@ body, .stApp {
     margin-bottom: 20px;
 }
 
-h1 {
-    text-align: center;
-    color: #003366;
-    font-weight: 700;
-    margin-bottom: 10px;
+.info-card {
+    background-color: #f5f5f5;
+    border-left: 6px solid #0055a5;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
 }
 
 h4 {
@@ -36,6 +84,21 @@ h4 {
     padding-left: 8px;
 }
 
+.label-line {
+    font-weight: bold;
+    color: #003366;
+    margin-bottom: 5px;
+}
+
+.inline-scale {
+    font-weight: normal;
+    font-size: 0.85em;
+    color: #555;
+    margin-left: 5px;
+    font-style: italic;
+}
+
+/* === BOUTONS === */
 .stButton>button {
     background-color: #003366;
     color: white;
@@ -51,6 +114,7 @@ h4 {
     transform: scale(1.02);
 }
 
+/* === MESSAGE DE SUCCÈS === */
 .success-msg {
     text-align: center;
     font-weight: bold;
@@ -60,8 +124,39 @@ h4 {
 </style>
 """, unsafe_allow_html=True)
 
-# === TITRE ===
-st.title("Suivi de la Charge - RMBB 🏀")
+# === EN-TÊTE BLEU AVEC LOGOS + TEXTE ===
+st.markdown(f"""
+<div class="header-banner">
+    <div class="top-text">🏀 Saison 2025-2026 — Championnat LF2</div>
+    <div class="header-content">
+        <img src="data:image/png;base64,{logo_base64}">
+        <h1>Suivi de la Charge - RMBB</h1>
+        <img src="data:image/png;base64,{logo_base64}">
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# === FICHE EXPLICATIVE ===
+st.markdown("""
+<div class="info-card">
+<h4>ℹ️ Pourquoi remplir ce suivi ?</h4>
+<p>
+Ce questionnaire permet de suivre ton état de forme et ta récupération au fil des jours.<br>
+L’objectif est d’adapter les entraînements pour éviter la fatigue excessive et améliorer tes performances.
+</p>
+
+<ul>
+<li><b>État mental :</b> ton ressenti psychologique, motivation, concentration, stress.</li>
+<li><b>État physique :</b> ton ressenti corporel, douleurs, énergie, fatigue générale.</li>
+<li><b>Échelle de Borg :</b> à quel point l’entraînement t’a semblé difficile (effort perçu).</li>
+</ul>
+
+<p style='font-size:0.9em; color:#444;'>
+👉 <b>0 = parfait</b> (très bien mentalement/physiquement, facile à l’entraînement)<br>
+👉 <b>10 = difficile</b> (fatiguée, stressée ou effort très intense)
+</p>
+</div>
+""", unsafe_allow_html=True)
 
 # === NOM Joueuse ===
 joueuse = st.text_input("👤 Nom et prénom de la joueuse")
@@ -70,16 +165,22 @@ joueuse = st.text_input("👤 Nom et prénom de la joueuse")
 st.markdown('<div class="card">', unsafe_allow_html=True)
 st.markdown("<h4>🧠 État du jour</h4>", unsafe_allow_html=True)
 col1, col2 = st.columns(2)
+
 with col1:
-    etat_mental = st.slider("Mental", 0, 10, 5)
+    st.markdown('<div class="label-line">Mental<span class="inline-scale">(0 = excellent / 10 = très fatiguée)</span></div>', unsafe_allow_html=True)
+    etat_mental = st.slider("", 0, 10, 0, key="mental")
+
 with col2:
-    etat_physique = st.slider("Physique", 0, 10, 5)
+    st.markdown('<div class="label-line">Physique<span class="inline-scale">(0 = excellent / 10 = très fatiguée)</span></div>', unsafe_allow_html=True)
+    etat_physique = st.slider("", 0, 10, 0, key="physique")
+
 st.markdown('</div>', unsafe_allow_html=True)
 
 # === ÉVALUATION ENTRAÎNEMENT ===
 st.markdown('<div class="card">', unsafe_allow_html=True)
 st.markdown("<h4>💪 Évaluation de l’entraînement</h4>", unsafe_allow_html=True)
-entrainement = st.slider("Échelle de Borg (0 = très facile, 10 = effort maximal)", 0, 10, 5)
+st.markdown('<div class="label-line">Échelle de Borg<span class="inline-scale">(0 = très facile / 10 = effort maximal)</span></div>', unsafe_allow_html=True)
+entrainement = st.slider("", 0, 10, 5, key="borg")
 st.markdown('</div>', unsafe_allow_html=True)
 
 # === COMMENTAIRE ===
@@ -96,9 +197,9 @@ if st.button("💾 Enregistrer mes données"):
         file_path = "suivi_joueuse.csv"
         df_new = pd.DataFrame({
             "Joueuse": [joueuse],
-            "Etat_Mental": [etat_mental],
-            "Etat_Physique": [etat_physique],
-            "Evaluation_Entrainement": [entrainement],
+            "Etat_Mental (0=Excellent,10=Fatiguée)": [etat_mental],
+            "Etat_Physique (0=Excellent,10=Fatiguée)": [etat_physique],
+            "Evaluation_Entrainement (Borg)": [entrainement],
             "Commentaire": [commentaire]
         })
 
